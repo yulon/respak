@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(respack)
+project(respak)
 
 include("cmake/DepPull.cmake")
 
@@ -9,14 +9,25 @@ DepPull(
 	GIT_REPO "https://github.com/yulon/rua.git"
 )
 
+DepPull(
+	zlib
+	PKG_URL "https://zlib.net/zlib1211.zip"
+	PKG_HASH SHA256=d7510a8ee1918b7d0cad197a089c0a2cd4d6df05fee22389f67f115e738b178d
+	SRC_FIX "zlib-1.2.11"
+)
+
+add_library(deppull-zlibstatic INTERFACE)
+target_include_directories(deppull-zlibstatic INTERFACE "${DEPPULL_zlib_SRC}" "${DEPPULL_zlib_BUILD}")
+target_link_libraries(deppull-zlibstatic INTERFACE zlibstatic)
+
 add_library(respak INTERFACE)
 set(respak_INCLUDE_DIR "include")
 target_include_directories(respak INTERFACE ${respak_INCLUDE_DIR})
 target_link_libraries(respak INTERFACE rua)
 
-add_executable(respack-cmd "src/cmd.cpp")
-set_target_properties(respack-cmd PROPERTIES
+add_executable(respak-cmd "src/cmd.cpp")
+set_target_properties(respak-cmd PROPERTIES
 	CXX_STANDARD 17
-	RUNTIME_OUTPUT_NAME "respack"
+	RUNTIME_OUTPUT_NAME "respak"
 )
-target_link_libraries(respack-cmd rua respak)
+target_link_libraries(respak-cmd respak deppull-zlibstatic)
