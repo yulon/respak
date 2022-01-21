@@ -4,7 +4,7 @@ if(DEFINED _DEFAULT_DEPPULL_CACHE)
 	return()
 endif()
 
-set(_DEFAULT_DEPPULL_CACHE "${CMAKE_BINARY_DIR}/DepPull")
+set(_DEFAULT_DEPPULL_CACHE "${CMAKE_BINARY_DIR}/deppull")
 
 if(NOT DEFINED DEPPULL_CACHE)
 	if(DEFINED CACHE{DEPPULL_CACHE})
@@ -20,21 +20,21 @@ string(TOUPPER "${DEPPULL_CACHE}" _DEPPULL_PATH_TOUPPER)
 
 if("${_DEPPULL_PATH_TOUPPER}" STREQUAL "IN_HOME")
 	if(WIN32)
-		set(DEPPULL_CACHE "$ENV{USERPROFILE}/.DepPull")
+		set(DEPPULL_CACHE "$ENV{USERPROFILE}/.deppull")
 	elseif(UNIX)
-		set(DEPPULL_CACHE "$ENV{HOME}/.DepPull")
+		set(DEPPULL_CACHE "$ENV{HOME}/.deppull")
 	endif()
 elseif("${_DEPPULL_PATH_TOUPPER}" STREQUAL "IN_TEMP")
 	if(WIN32)
-		set(DEPPULL_CACHE "$ENV{TEMP}/.DepPull")
+		set(DEPPULL_CACHE "$ENV{TEMP}/.deppull")
 	elseif(UNIX)
-		set(DEPPULL_CACHE "/tmp/.DepPull")
+		set(DEPPULL_CACHE "/tmp/.deppull")
 	endif()
 endif()
 
 file(TO_CMAKE_PATH "${DEPPULL_CACHE}" DEPPULL_CACHE)
 
-message(STATUS "DepPull: DEPPULL_CACHE = ${DEPPULL_CACHE}")
+message(STATUS "deppull: DEPPULL_CACHE = ${DEPPULL_CACHE}")
 
 if(NOT DEFINED DEPPULL_DEV)
 	if(DEFINED CACHE{DEPPULL_DEV})
@@ -48,11 +48,11 @@ endif()
 
 if(DEPPULL_DEV)
 	file(TO_CMAKE_PATH "${DEPPULL_DEV}" DEPPULL_DEV)
-	message(STATUS "DepPull: DEPPULL_DEV = ${DEPPULL_DEV}")
+	message(STATUS "deppull: DEPPULL_DEV = ${DEPPULL_DEV}")
 endif()
 
-function(_DepPull_MakeSrcPaths A_DEP_PREFIX A_SRC_FIX)
-	set(ROOT_REL "${A_DEP_PREFIX}/src")
+function(_deppull_mkpaths A_STORAGE_PREFIX A_SRC_FIX)
+	set(ROOT_REL "${A_STORAGE_PREFIX}/src")
 	set(ROOT_REL "${ROOT_REL}" PARENT_SCOPE)
 
 	set(ROOT "${DEPPULL_CACHE}/${ROOT_REL}")
@@ -68,12 +68,12 @@ function(_DepPull_MakeSrcPaths A_DEP_PREFIX A_SRC_FIX)
 	endif()
 endfunction()
 
-function(DepPull A_NAME)
+function(deppull A_NAME)
 	if(DEFINED DEPPULL_${A_NAME}_ROOT)
 		return()
 	endif()
 
-	message(STATUS "DepPull: Checking '${A_NAME}' ...")
+	message(STATUS "deppull: Checking '${A_NAME}' ...")
 
 	set(oneValueArgs
 		USE_PACKAGE
@@ -106,10 +106,10 @@ function(DepPull A_NAME)
 		find_package(${A_NAME} QUIET)
 		if(${A_NAME}_FOUND)
 			if(DEFINED ${A_NAME}_VERSION)
-				message(STATUS "DepPull: Found '${A_NAME}@${${A_NAME}_VERSION}'")
+				message(STATUS "deppull: Found '${A_NAME}@${${A_NAME}_VERSION}'")
 				return()
 			endif()
-			message(STATUS "DepPull: Found '${A_NAME}'")
+			message(STATUS "deppull: Found '${A_NAME}'")
 			return()
 		endif()
 	endif()
@@ -118,7 +118,7 @@ function(DepPull A_NAME)
 		string(MAKE_C_IDENTIFIER "${A_PKG_HASH}" PKG_NAME)
 		set(STORAGE_PREFIX "${NAME_TOLOWER}/${PKG_NAME}")
 
-		_DepPull_MakeSrcPaths("${STORAGE_PREFIX}" "${A_SRC_FIX}")
+		_deppull_mkpaths("${STORAGE_PREFIX}" "${A_SRC_FIX}")
 
 		if(EXISTS "${ROOT}.ready")
 			set(FOUND TRUE)
@@ -171,7 +171,7 @@ function(DepPull A_NAME)
 			set(STORAGE_PREFIX "${STORAGE_PREFIX}-${GIT_TAG}")
 		endif()
 
-		_DepPull_MakeSrcPaths("${STORAGE_PREFIX}" "${A_SRC_FIX}")
+		_deppull_mkpaths("${STORAGE_PREFIX}" "${A_SRC_FIX}")
 
 		if(NOT EXISTS "${ROOT}.ready")
 
@@ -237,12 +237,12 @@ function(DepPull A_NAME)
 	endif()
 
 	if(NOT FOUND)
-		message(FATAL_ERROR "DepPull: Not found '${A_NAME}'")
+		message(FATAL_ERROR "deppull: Not found '${A_NAME}'")
 	endif()
 
-	message(STATUS "DepPull: Using '${A_NAME}' at ${SRC}")
+	message(STATUS "deppull: Using '${A_NAME}' at ${SRC}")
 
-	set(BUILD "${CMAKE_CURRENT_BINARY_DIR}/DepPull/${STORAGE_PREFIX}/build")
+	set(BUILD "${CMAKE_CURRENT_BINARY_DIR}/deppull/${STORAGE_PREFIX}/build")
 	if(EXISTS "${BUILD}" AND "${ROOT}.ready" IS_NEWER_THAN "${BUILD}")
 		file(REMOVE_RECURSE "${BUILD}")
 	endif()
