@@ -2,21 +2,21 @@ cmake_minimum_required(VERSION 3.0)
 
 project(respak)
 
-include("cmake/deppull.cmake")
+include("cmake/depu.cmake")
 
-deppull(
+depu(
 	rua
 	GIT_REPO "https://github.com/yulon/rua.git"
 )
 
-deppull(
+depu(
 	zlib
 	PKG_URL "https://zlib.net/zlib1211.zip"
 	PKG_HASH SHA256=d7510a8ee1918b7d0cad197a089c0a2cd4d6df05fee22389f67f115e738b178d
 	SRC_FIX "zlib-1.2.11"
 )
 
-target_include_directories(zlibstatic PUBLIC "${DEPPULL_zlib_SRC}" "${DEPPULL_zlib_BUILD}")
+target_include_directories(zlibstatic PUBLIC "${DEPU_zlib_SRC}" "${DEPU_zlib_BUILD}")
 
 add_library(respak INTERFACE)
 set(respak_INCLUDE_DIR "include")

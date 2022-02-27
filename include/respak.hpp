@@ -1,7 +1,7 @@
 #ifndef _RESPAK_HPP
 #define _RESPAK_HPP
 
-#include <rua/bytes.hpp>
+#include <rua/binary.hpp>
 #include <rua/file.hpp>
 #include <rua/log.hpp>
 #include <rua/macros.hpp>
@@ -28,7 +28,7 @@ inline std::map<std::string, rua::bytes> &_map() {
 	return map;
 }
 
-RUA_INLINE_CONST auto _meta_sz = static_cast<ptrdiff_t>(2 + 2 * sizeof(uint64_t));
+RUA_CVAL auto _meta_sz = static_cast<ptrdiff_t>(2 + 2 * sizeof(uint64_t));
 
 inline rua::string_view pack(rua::file &arc) {
 	auto pak_sz = arc.size();
