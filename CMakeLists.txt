@@ -28,4 +28,11 @@ set_target_properties(respak-cmd PROPERTIES
 	CXX_STANDARD 17
 	RUNTIME_OUTPUT_NAME "respak"
 )
-target_link_libraries(respak-cmd respak zlibstatic)
+target_link_libraries(respak-cmd respak)
+
+add_executable(respakz-cmd "src/cmd.cpp")
+set_target_properties(respakz-cmd PROPERTIES
+	CXX_STANDARD 17
+	RUNTIME_OUTPUT_NAME "respakz"
+)
+target_link_libraries(respakz-cmd respak zlibstatic)
